@@ -124,15 +124,14 @@ int main(int argc, char **argv)
         gera_arvore_branch(0, altura, getpid());
         clock_t t1_branch = clock();
         double tempo_branch = (t1_branch-t0_branch)*1000.0 / CLOCKS_PER_SEC;
-
+        
         clock_t t0_livre = clock();
         gera_arvore_livre(0, altura, getpid());
         clock_t t1_livre = clock();
         double tempo_livre = (t1_livre-t0_livre)*1000.0 / CLOCKS_PER_SEC;
-   
+ 
 
         if(getpid() == root){
-            
             printf ("Tempo execucao 'Branch': %g ms\n", tempo_branch);
             printf ("Tempo execucao 'Livre': %g ms\n", tempo_livre);
 
