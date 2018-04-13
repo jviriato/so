@@ -21,6 +21,7 @@ int gera_arvore(int nivel, int altura)
             gera_arvore(nivel, altura);
         }
         else {
+            wait(&ArvEsq);
             ArvDir = fork();
             if (ArvDir < 0){
                 printf("Erro.\n");
@@ -31,13 +32,12 @@ int gera_arvore(int nivel, int altura)
                 gera_arvore(nivel, altura);
             }
             else {
-				wait(&ArvEsq);
 				wait(&ArvDir);
 				printf("             T[%d, %d]\n", getpid(), getppid());
 			 	if (ROOT != getpid())				
 					exit(1);
 				else
-					return 0;
+					return 5;
             }
         }
     }
@@ -48,7 +48,7 @@ int gera_arvore(int nivel, int altura)
 
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
     if (argc == 2 && atoi(argv[1]) > 0) {
         int altura = atoi(argv[1]);
