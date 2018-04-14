@@ -3,9 +3,15 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <sys/wait.h>
+#include <sys/time.h>
 #include <math.h>
 #include <time.h>
 
+long wtime(){
+   struct timeval t;
+   gettimeofday(&t, NULL);
+   return t.tv_sec*1000000 + t.tv_usec;
+}
 
 void gera_arvore_branch(int nivel, int altura, int root)    
 {
@@ -120,20 +126,20 @@ int main(int argc, char **argv)
         pid_t root = getpid();
 
 
-        clock_t t0_branch = clock();
+        long t0_branch = wtime();
         gera_arvore_branch(0, altura, getpid());
-        clock_t t1_branch = clock();
-        double tempo_branch = (t1_branch-t0_branch)*1000.0 / CLOCKS_PER_SEC;
+        long t1_branch = wtime();
+        double tempo_branch = (t1_branch - t0_branch);
         
-        clock_t t0_livre = clock();
+        long t0_livre = wtime();
         gera_arvore_livre(0, altura, getpid());
-        clock_t t1_livre = clock();
-        double tempo_livre = (t1_livre-t0_livre)*1000.0 / CLOCKS_PER_SEC;
+        long t1_livre = wtime();
+        double tempo_livre = (t1_livre - t0_branch);
  
 
         if(getpid() == root){
-            printf ("Tempo execucao 'Branch': %g ms\n", tempo_branch);
-            printf ("Tempo execucao 'Livre': %g ms\n", tempo_livre);
+            printf ("Tempo execucao 'Branch': %lf seg\n", (tempo_branch / 1000000));
+            printf ("Tempo execucao 'Livre': %lf seg\n", (tempo_livre / 1000000));
 
         }
     }
@@ -141,7 +147,6 @@ int main(int argc, char **argv)
         printf("Entrada inválida\n");
     }
     printf("Fim PID = %d (root)\n", getpid());
-
     return 0;
 }
 
