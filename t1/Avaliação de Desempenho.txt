@@ -5,13 +5,7 @@ Sistemas Operacionais 2018
 Professora Pitthan
 
 Medições:
-Medição de tempo para o programa de fork com árvore de branch e livre de processos para diferentes alturas:
-
-José Victor Viriato
-Sistemas Operacionais 2018
-Professora Pitthan
-
-Medições:
+(Nota-se que o Branch sempre levará menos tempo que o livre.)
 
 ============
     branch
@@ -48,7 +42,7 @@ Medições:
 0.000694 seg
 0.000667 seg
 
-Avg: 0.00098
+Avg: 0.00098 seg
 
 ============
     livre
@@ -308,4 +302,3 @@ Avg: 0.31906 seg
 0.636481 seg
 
 Avg: 0.56515 seg
-
