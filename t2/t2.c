@@ -113,7 +113,7 @@ void divide_trabalho(args* arg, int i, int* fim_do_anterior, int ratio, int* div
         }
     }
     // printf("init: %d end: %d\n", arg->init, arg->end);
-    // printf("divisao: %d\n", *divisao);
+    printf("divisao: %d\n", *divisao);
 }
 
 
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 
         int divisao = worksize % threads;        
         int ratio   = worksize / threads;
-        // printf("ratio: %d divisao: %d\n", ratio, divisao);
+        printf("ratio: %d divisao: %d\n", ratio, divisao);
 
         int soma_defectivo = 0;
         int soma_abundante = 0;
@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
 
         }else{
             int fim_do_anterior = ratio;
-            divisao -= 1;
+            // divisao -= 1;
             for(int i = 0; i < threads; i++){
                 arg = malloc(sizeof(args));
                 divide_trabalho(arg, i, &fim_do_anterior, ratio, &divisao, threads);
