@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 
 typedef struct{
     int init;
@@ -40,8 +41,10 @@ int sequencial(int worksize)
         v[i] = soma_de_divisores(i);
         if(v[i] > i)
             qtd_abundante++;
-        else if(v[i] < i)
+        else if(v[i] < i){
+            // printf("defectivo: %d\n", i);
             qtd_defectivo++;
+        }
         else if (v[i] == i)
             qtd_perfeito++;
     }
@@ -52,6 +55,7 @@ int sequencial(int worksize)
 
 void *threads_com_chunk(void* arg)
 {
+    clock_t start = clock(), diff;
     args *vargs = (args *) arg;
     args_return *resultado = malloc(sizeof(args_return));    
     int v[vargs->end - vargs->init+1];
@@ -67,6 +71,7 @@ void *threads_com_chunk(void* arg)
         }
         else if(v[j] < i){
             qtd_defectivo++;
+            // printf("defectivo: %d\n", i);
         }
 
         else if (v[j] == i){
@@ -77,7 +82,38 @@ void *threads_com_chunk(void* arg)
     resultado->qtd_abundante += qtd_abundante;
     resultado->qtd_defectivo += qtd_defectivo;
     resultado->qtd_perfeito  += qtd_perfeito;
+    diff = clock() - start;
+    resultado->msec = diff * 1000 / CLOCKS_PER_SEC;
+
     pthread_exit(resultado);
+}
+
+void divide_trabalho(args* arg, int i, int* fim_do_anterior, int ratio, int* divisao, int threads)
+{
+    if(i == 0){
+        arg->init = 0;
+        arg->end  = arg->init + ratio;
+        *fim_do_anterior = arg->end;
+        (*divisao)--;
+    }else if(*divisao > 0){
+        arg->init = (*fim_do_anterior) + 1;
+        arg->end  = arg->init + ratio;
+        *fim_do_anterior = arg->end;
+        (*divisao)--;
+    }else{
+        if(i == threads - 1){
+            arg->init = (*fim_do_anterior) + 1; 
+            arg->end = arg->init + ratio - 1;
+            *fim_do_anterior = arg->end;
+        }
+        else{
+            arg->init = (*fim_do_anterior) + 1; 
+            arg->end = arg->init + ratio - 1;
+            *fim_do_anterior = arg->end;
+        }
+    }
+    // printf("init: %d end: %d\n", arg->init, arg->end);
+    // printf("divisao: %d\n", *divisao);
 }
 
 
@@ -95,7 +131,9 @@ int main(int argc, char *argv[])
         args *arg;
 
         int divisao = worksize % threads;        
-        int ratio = worksize / threads;
+        int ratio   = worksize / threads;
+        // printf("ratio: %d divisao: %d\n", ratio, divisao);
+
         int soma_defectivo = 0;
         int soma_abundante = 0;
         int soma_perfeito = 0;
@@ -117,29 +155,7 @@ int main(int argc, char *argv[])
             divisao -= 1;
             for(int i = 0; i < threads; i++){
                 arg = malloc(sizeof(args));
-                if(i == 0){
-                    arg->init = 0;
-                    arg->end  = arg->init + ratio + 1;
-                    fim_do_anterior = arg->end;
-                    divisao--;
-
-                }else if(divisao > 0){
-                    arg->init = fim_do_anterior + 1;
-                    arg->end  = arg->init + ratio;
-                    fim_do_anterior = arg->end;
-                    divisao--;
-                }else{
-                    if(i == threads - 1){
-                        arg->init = fim_do_anterior + 1; 
-                        arg->end = arg->init + ratio - 2;
-                        fim_do_anterior = arg->end;
-                    }
-                    else{
-                        arg->init = fim_do_anterior + 1; 
-                        arg->end = arg->init + ratio - 1;
-                        fim_do_anterior = arg->end;
-                    }
-                }
+                divide_trabalho(arg, i, &fim_do_anterior, ratio, &divisao, threads);
                 if (pthread_create(&tid[i], NULL, threads_com_chunk, (void*) arg)) {
                     printf("erro ao criar thread\n"); 
                     exit(-1);
