@@ -12,6 +12,12 @@ typedef struct{
 } args;
 
 typedef struct{
+    int init;
+    int end;
+    int ratio;
+} args_esparsa;
+
+typedef struct{
     int msec;
     int qtd_defectivo;
     int qtd_abundante;
@@ -64,14 +70,12 @@ void *threads_com_chunk(void* arg)
     int qtd_perfeito  = 0;
     int j = 0;
     for (int i = vargs->init; i < vargs->end+1; i++){
-        // printf("init: %d end: %d\n", vargs->init, vargs->end);
         v[j] = soma_de_divisores(i);
         if(v[j] > i){
             qtd_abundante++;
         }
         else if(v[j] < i){
             qtd_defectivo++;
-            // printf("defectivo: %d\n", i);
         }
 
         else if (v[j] == i){
@@ -87,6 +91,42 @@ void *threads_com_chunk(void* arg)
 
     pthread_exit(resultado);
 }
+
+void *threads_esparsas(void* arg)
+{
+    clock_t start = clock(), diff;
+    args_esparsa *vargs = (args_esparsa *) arg;
+    args_return *resultado = malloc(sizeof(args_return));    
+    int v[vargs->end - vargs->init+1];
+    int qtd_defectivo = 0;
+    int qtd_abundante = 0;
+    int qtd_perfeito  = 0;
+    int j = 0;
+
+    for (int i = vargs->init; i < vargs->end; i+=vargs->ratio){
+        
+        v[j] = soma_de_divisores(i);
+        if(v[j] > i){
+            qtd_abundante++;
+        }
+        else if(v[j] < i){
+            qtd_defectivo++;
+        }
+
+        else if (v[j] == i){
+            qtd_perfeito++;
+        }
+        j++;
+    }
+    resultado->qtd_abundante += qtd_abundante;
+    resultado->qtd_defectivo += qtd_defectivo;
+    resultado->qtd_perfeito  += qtd_perfeito;
+    diff = clock() - start;
+    resultado->msec = diff * 1000 / CLOCKS_PER_SEC;
+
+    pthread_exit(resultado);
+}
+
 
 void divide_trabalho(args* arg, int i, int* fim_do_anterior, int ratio, int* divisao, int threads)
 {
@@ -113,8 +153,10 @@ void divide_trabalho(args* arg, int i, int* fim_do_anterior, int ratio, int* div
         }
     }
     // printf("init: %d end: %d\n", arg->init, arg->end);
-    printf("divisao: %d\n", *divisao);
+    // printf("divisao: %d\n", *divisao);
 }
+
+
 
 
 int main(int argc, char *argv[])
@@ -129,11 +171,9 @@ int main(int argc, char *argv[])
         
         pthread_t tid[threads];
         args *arg;
-
+        args_esparsa *arg_e;
         int divisao = worksize % threads;        
         int ratio   = worksize / threads;
-        printf("ratio: %d divisao: %d\n", ratio, divisao);
-
         int soma_defectivo = 0;
         int soma_abundante = 0;
         int soma_perfeito = 0;
@@ -152,7 +192,6 @@ int main(int argc, char *argv[])
 
         }else{
             int fim_do_anterior = ratio;
-            // divisao -= 1;
             for(int i = 0; i < threads; i++){
                 arg = malloc(sizeof(args));
                 divide_trabalho(arg, i, &fim_do_anterior, ratio, &divisao, threads);
@@ -173,6 +212,33 @@ int main(int argc, char *argv[])
         }
         printf("C/ CHUNKS:\nqtd. Defectivo: %d\nqtd. Abundante: %d\nqtd. Perfeito: %d\n", soma_defectivo, soma_abundante, soma_perfeito);
         printf("Time taken: %d seconds %d milliseconds\n\n", msec/1000, msec%1000);
+
+        for(int i = 0; i < threads; i++){
+            arg_e = malloc(sizeof(args_esparsa));
+            arg_e->init = i;
+            arg_e->end  = worksize; 
+            arg_e->ratio = threads;           
+            if (pthread_create(&tid[i], NULL, threads_esparsas, (void*) arg_e)) {
+                printf("erro ao criar thread\n"); 
+                exit(-1);
+            }
+        }
+        msec = 0;
+        soma_abundante = 0;
+        soma_defectivo = 0;
+        soma_perfeito  = 0;
+        for(int i = 0; i < threads; i++){
+            args_return* soma;
+            pthread_join(tid[i], (void**)&soma);
+            soma_defectivo += soma->qtd_defectivo;
+            soma_abundante += soma->qtd_abundante;
+            soma_perfeito  += soma->qtd_perfeito;
+            msec = soma->msec;
+        }
+        printf("ESPARSAS:\nqtd. Defectivo: %d\nqtd. Abundante: %d\nqtd. Perfeito: %d\n", soma_defectivo, soma_abundante, soma_perfeito);
+        printf("Time taken: %d seconds %d milliseconds\n\n", msec/1000, msec%1000);
+
+
 
     pthread_exit(NULL);
     }
