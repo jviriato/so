@@ -22,21 +22,21 @@ typedef struct{
     int qtd_defectivo;
     int qtd_abundante;
     int qtd_perfeito;
+    int worksize;
 } args_return;
 
 int soma_de_divisores(int n)
 {
     int sum = 0;
-    for (int i = 1; i < n; i++){
-        if (n % i == 0){
+    for (int i = 1; i < n; i++)
+        if (n % i == 0)
             sum += i;
-        }
-    }
     return sum;
 }
 
 int sequencial(int worksize)
 {
+    printf("---------------------------------\n               [D]     [A]     [P]   [WTot]\n");
     clock_t start = clock(), diff;
     int v[worksize];
     int qtd_defectivo = 0;
@@ -47,14 +47,12 @@ int sequencial(int worksize)
         v[i] = soma_de_divisores(i);
         if(v[i] > i)
             qtd_abundante++;
-        else if(v[i] < i){
-            // printf("defectivo: %d\n", i);
+        else if(v[i] < i)
             qtd_defectivo++;
-        }
         else if (v[i] == i)
             qtd_perfeito++;
     }
-    printf("SEQUENCIAL:\nqtd. Defectivo: %d\nqtd. Abundante: %d\nqtd. Perfeito: %d\n", qtd_defectivo, qtd_abundante, qtd_perfeito);
+    printf("* Sequencial:   %d    %d    %d     %d\n", qtd_defectivo, qtd_abundante, qtd_perfeito, worksize);
     diff = clock() - start;
     return diff * 1000 / CLOCKS_PER_SEC;
 }
@@ -63,8 +61,9 @@ void *threads_com_chunk(void* arg)
 {
     clock_t start = clock(), diff;
     args *vargs = (args *) arg;
-    args_return *resultado = malloc(sizeof(args_return));    
-    int v[vargs->end - vargs->init+1];
+    args_return *resultado = malloc(sizeof(args_return));
+    int worksize = vargs->end - vargs->init+1;   
+    int v[worksize];
     int qtd_defectivo = 0;
     int qtd_abundante = 0;
     int qtd_perfeito  = 0;
@@ -88,6 +87,7 @@ void *threads_com_chunk(void* arg)
     resultado->qtd_perfeito  += qtd_perfeito;
     diff = clock() - start;
     resultado->msec = diff * 1000 / CLOCKS_PER_SEC;
+    resultado->worksize = worksize;
 
     pthread_exit(resultado);
 }
@@ -96,8 +96,9 @@ void *threads_esparsas(void* arg)
 {
     clock_t start = clock(), diff;
     args_esparsa *vargs = (args_esparsa *) arg;
-    args_return *resultado = malloc(sizeof(args_return));    
-    int v[vargs->end - vargs->init+1];
+    args_return *resultado = malloc(sizeof(args_return));  
+    int worksize = vargs->end - vargs->init+1;  
+    int v[worksize];
     int qtd_defectivo = 0;
     int qtd_abundante = 0;
     int qtd_perfeito  = 0;
@@ -123,7 +124,7 @@ void *threads_esparsas(void* arg)
     resultado->qtd_perfeito  += qtd_perfeito;
     diff = clock() - start;
     resultado->msec = diff * 1000 / CLOCKS_PER_SEC;
-
+    resultado->worksize = worksize;
     pthread_exit(resultado);
 }
 
@@ -152,8 +153,6 @@ void divide_trabalho(args* arg, int i, int* fim_do_anterior, int ratio, int* div
             *fim_do_anterior = arg->end;
         }
     }
-    // printf("init: %d end: %d\n", arg->init, arg->end);
-    // printf("divisao: %d\n", *divisao);
 }
 
 
@@ -165,8 +164,7 @@ int main(int argc, char *argv[])
         int worksize = atoi(argv[1]);
         int threads  = atoi(argv[2]);
 
-        int msec = sequencial(worksize);
-        printf("Time taken: %d seconds %d milliseconds\n\n", msec/1000, msec%1000);
+        int msec_sequencial = sequencial(worksize);
 
         
         pthread_t tid[threads];
@@ -201,18 +199,23 @@ int main(int argc, char *argv[])
                 }
             }
         }
-        msec = 0;
+        int msec_chunks = 0;
+        printf("---------------------------------\n   (Chunk)     [D]     [A]     [P]   [WTh]\n");
+
         for(int i = 0; i < threads; i++){
             args_return* soma;
             pthread_join(tid[i], (void**)&soma);
             soma_defectivo += soma->qtd_defectivo;
             soma_abundante += soma->qtd_abundante;
             soma_perfeito  += soma->qtd_perfeito;
-            msec = soma->msec;
-        }
-        printf("C/ CHUNKS:\nqtd. Defectivo: %d\nqtd. Abundante: %d\nqtd. Perfeito: %d\n", soma_defectivo, soma_abundante, soma_perfeito);
-        printf("Time taken: %d seconds %d milliseconds\n\n", msec/1000, msec%1000);
+            msec_chunks = soma->msec;
+            printf("* Thread %d:    %d    %d    %d     %d\n", i, soma->qtd_defectivo, soma->qtd_abundante, soma->qtd_perfeito, soma->worksize);
 
+        }
+        printf("  [TOTAL]:     %d    %d   
+         %d     %d\n", soma_defectivo, soma_abundante, soma_perfeito, worksize);
+
+        printf("---------------------------------\n   (Esparsa)   [D]     [A]     [P]   [WTh]\n");
         for(int i = 0; i < threads; i++){
             arg_e = malloc(sizeof(args_esparsa));
             arg_e->init = i;
@@ -223,22 +226,29 @@ int main(int argc, char *argv[])
                 exit(-1);
             }
         }
-        msec = 0;
+        int msec_esparsa = 0;
         soma_abundante = 0;
         soma_defectivo = 0;
         soma_perfeito  = 0;
+        worksize       = 0;
         for(int i = 0; i < threads; i++){
             args_return* soma;
             pthread_join(tid[i], (void**)&soma);
             soma_defectivo += soma->qtd_defectivo;
             soma_abundante += soma->qtd_abundante;
             soma_perfeito  += soma->qtd_perfeito;
-            msec = soma->msec;
+            msec_esparsa = soma->msec;
+            printf("* Thread %d:    %d    %d    %d     %d\n", i, soma->qtd_defectivo, soma->qtd_abundante, soma->qtd_perfeito, soma->worksize);
+
         }
-        printf("ESPARSAS:\nqtd. Defectivo: %d\nqtd. Abundante: %d\nqtd. Perfeito: %d\n", soma_defectivo, soma_abundante, soma_perfeito);
-        printf("Time taken: %d seconds %d milliseconds\n\n", msec/1000, msec%1000);
+        printf("  [TOTAL]:   %d    %d    %d     %d\n", soma_defectivo, soma_abundante, soma_perfeito, worksize);
 
 
+    printf("---------------------------------\n");
+    printf("Tempo da busca sequencial:  %d seconds %d milliseconds\n", msec_sequencial/1000, msec_sequencial%1000);
+    printf("Tempo da busca com threads: %d seconds %d milliseconds (distribuicao por chunk)\n", msec_chunks/1000, msec_chunks%1000);
+    printf("Tempo da busca com threads: %d seconds %d milliseconds (distribuicao esparsa\n", msec_esparsa/1000, msec_esparsa%1000);
+    printf("---------------------------------\n");
 
     pthread_exit(NULL);
     }
