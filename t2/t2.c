@@ -212,8 +212,7 @@ int main(int argc, char *argv[])
             printf("* Thread %d:    %d    %d    %d     %d\n", i, soma->qtd_defectivo, soma->qtd_abundante, soma->qtd_perfeito, soma->worksize);
 
         }
-        printf("  [TOTAL]:     %d    %d   
-         %d     %d\n", soma_defectivo, soma_abundante, soma_perfeito, worksize);
+        printf("  [TOTAL]:     %d    %d   %d     %d\n", soma_defectivo, soma_abundante, soma_perfeito, worksize);
 
         printf("---------------------------------\n   (Esparsa)   [D]     [A]     [P]   [WTh]\n");
         for(int i = 0; i < threads; i++){
@@ -249,6 +248,15 @@ int main(int argc, char *argv[])
     printf("Tempo da busca com threads: %d seconds %d milliseconds (distribuicao por chunk)\n", msec_chunks/1000, msec_chunks%1000);
     printf("Tempo da busca com threads: %d seconds %d milliseconds (distribuicao esparsa\n", msec_esparsa/1000, msec_esparsa%1000);
     printf("---------------------------------\n");
+
+
+    // FILE *f = fopen("file.txt", "a");
+    // printf("---------------------------------\n");
+    // fprintf(f, "Tempo da busca sequencial:  %d seconds %d milliseconds\n", msec_sequencial/1000, msec_sequencial);
+    // fprintf(f, "Tempo da busca com threads: %d seconds %d milliseconds (distribuicao por chunk)\n", msec_chunks/1000, msec_chunks);
+    // fprintf(f, "Tempo da busca com threads: %d seconds %d milliseconds (distribuicao esparsa)\n", msec_esparsa/1000, msec_esparsa);
+    // fprintf(f, "\n");
+    // printf("---------------------------------\n");
 
     pthread_exit(NULL);
     }
