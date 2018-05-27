@@ -1,4 +1,0 @@
-Tempo da busca sequencial:  0 seconds 2 milliseconds
-Tempo da busca com threads: 0 seconds 1 milliseconds (distribuicao por chunk)
-Tempo da busca com threads: 0 seconds 0 milliseconds (distribuicao esparsa)
-
