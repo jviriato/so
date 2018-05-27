@@ -1,0 +1,31 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build t2",
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "-g",
+                "t2.c",
+                "-pthread",
+                "-lm",
+                "-Wall",
+                "-o",
+                "t2"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+        {
+            "label": "run t2",
+            "type": "shell",
+            "command": "./t2",
+            "args": [
+                "1000", "4"
+            ]
+        }
+    ]
+}

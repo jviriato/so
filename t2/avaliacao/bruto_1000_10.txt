@@ -1,0 +1,40 @@
+Tempo da busca sequencial:  0 seconds 152 milliseconds
+Tempo da busca com threads: 0 seconds 168 milliseconds (distribuicao por chunk)
+Tempo da busca com threads: 0 seconds 235 milliseconds (distribuicao esparsa)
+
+Tempo da busca sequencial:  0 seconds 160 milliseconds
+Tempo da busca com threads: 0 seconds 166 milliseconds (distribuicao por chunk)
+Tempo da busca com threads: 0 seconds 200 milliseconds (distribuicao esparsa)
+
+Tempo da busca sequencial:  0 seconds 163 milliseconds
+Tempo da busca com threads: 0 seconds 164 milliseconds (distribuicao por chunk)
+Tempo da busca com threads: 0 seconds 213 milliseconds (distribuicao esparsa)
+
+Tempo da busca sequencial:  0 seconds 166 milliseconds
+Tempo da busca com threads: 0 seconds 204 milliseconds (distribuicao por chunk)
+Tempo da busca com threads: 0 seconds 108 milliseconds (distribuicao esparsa)
+
+Tempo da busca sequencial:  0 seconds 160 milliseconds
+Tempo da busca com threads: 0 seconds 230 milliseconds (distribuicao por chunk)
+Tempo da busca com threads: 0 seconds 119 milliseconds (distribuicao esparsa)
+
+Tempo da busca sequencial:  0 seconds 154 milliseconds
+Tempo da busca com threads: 0 seconds 228 milliseconds (distribuicao por chunk)
+Tempo da busca com threads: 0 seconds 168 milliseconds (distribuicao esparsa)
+
+Tempo da busca sequencial:  0 seconds 156 milliseconds
+Tempo da busca com threads: 0 seconds 128 milliseconds (distribuicao por chunk)
+Tempo da busca com threads: 0 seconds 205 milliseconds (distribuicao esparsa)
+
+Tempo da busca sequencial:  0 seconds 155 milliseconds
+Tempo da busca com threads: 0 seconds 158 milliseconds (distribuicao por chunk)
+Tempo da busca com threads: 0 seconds 140 milliseconds (distribuicao esparsa)
+
+Tempo da busca sequencial:  0 seconds 157 milliseconds
+Tempo da busca com threads: 0 seconds 214 milliseconds (distribuicao por chunk)
+Tempo da busca com threads: 0 seconds 182 milliseconds (distribuicao esparsa)
+
+Tempo da busca sequencial:  0 seconds 157 milliseconds
+Tempo da busca com threads: 0 seconds 225 milliseconds (distribuicao por chunk)
+Tempo da busca com threads: 0 seconds 110 milliseconds (distribuicao esparsa)
+

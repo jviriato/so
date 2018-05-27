@@ -155,7 +155,19 @@ void divide_trabalho(args* arg, int i, int* fim_do_anterior, int ratio, int* div
     }
 }
 
+void escreve_arquivo(char* argv1, char* argv2, int msec_sequencial, int msec_chunks, int msec_esparsa){
+    char *file = malloc(strlen(argv1) + strlen(argv2 + 2));
+    strcat(file, argv1);
+    strcat(file, "_");
+    strcat(file, argv2);
+    strcat(file, ".txt");
+    FILE *f = fopen(file, "a");
+    fprintf(f, "Tempo da busca sequencial:  %d seconds %d milliseconds\n", msec_sequencial/1000, msec_sequencial);
+    fprintf(f, "Tempo da busca com threads: %d seconds %d milliseconds (distribuicao por chunk)\n", msec_chunks/1000, msec_chunks);
+    fprintf(f, "Tempo da busca com threads: %d seconds %d milliseconds (distribuicao esparsa)\n", msec_esparsa/1000, msec_esparsa);
+    fprintf(f, "\n");
 
+}
 
 
 int main(int argc, char *argv[])
@@ -237,6 +249,7 @@ int main(int argc, char *argv[])
             soma_abundante += soma->qtd_abundante;
             soma_perfeito  += soma->qtd_perfeito;
             msec_esparsa = soma->msec;
+
             printf("* Thread %d:    %d    %d    %d     %d\n", i, soma->qtd_defectivo, soma->qtd_abundante, soma->qtd_perfeito, soma->worksize);
 
         }
@@ -249,14 +262,7 @@ int main(int argc, char *argv[])
     printf("Tempo da busca com threads: %d seconds %d milliseconds (distribuicao esparsa\n", msec_esparsa/1000, msec_esparsa%1000);
     printf("---------------------------------\n");
 
-
-    // FILE *f = fopen("file.txt", "a");
-    // printf("---------------------------------\n");
-    // fprintf(f, "Tempo da busca sequencial:  %d seconds %d milliseconds\n", msec_sequencial/1000, msec_sequencial);
-    // fprintf(f, "Tempo da busca com threads: %d seconds %d milliseconds (distribuicao por chunk)\n", msec_chunks/1000, msec_chunks);
-    // fprintf(f, "Tempo da busca com threads: %d seconds %d milliseconds (distribuicao esparsa)\n", msec_esparsa/1000, msec_esparsa);
-    // fprintf(f, "\n");
-    // printf("---------------------------------\n");
+    escreve_arquivo(argv[1], argv[2], msec_sequencial, msec_chunks, msec_esparsa);
 
     pthread_exit(NULL);
     }
