@@ -156,8 +156,8 @@ void divide_trabalho(args* arg, int i, int* fim_do_anterior, int ratio, int* div
 }
 
 void escreve_arquivo(char* argv1, char* argv2, int msec_sequencial, int msec_chunks, int msec_esparsa){
-    char *file = malloc(strlen(argv1) + strlen(argv2 + 2));
-    strcat(file, argv1);
+    char *file = malloc(strlen(argv1) + strlen(argv2) + 2);
+    strcpy(file, argv1);
     strcat(file, "_");
     strcat(file, argv2);
     strcat(file, ".txt");
