@@ -248,6 +248,7 @@ int main(int argc, char *argv[])
             soma_defectivo += soma->qtd_defectivo;
             soma_abundante += soma->qtd_abundante;
             soma_perfeito  += soma->qtd_perfeito;
+            worksize += soma->worksize;
             msec_esparsa = soma->msec;
 
             printf("* Thread %d:    %d    %d    %d     %d\n", i, soma->qtd_defectivo, soma->qtd_abundante, soma->qtd_perfeito, soma->worksize);
