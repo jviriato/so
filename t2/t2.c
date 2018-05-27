@@ -259,7 +259,7 @@ int main(int argc, char *argv[])
     printf("---------------------------------\n");
     printf("Tempo da busca sequencial:  %d seconds %d milliseconds\n", msec_sequencial/1000, msec_sequencial%1000);
     printf("Tempo da busca com threads: %d seconds %d milliseconds (distribuicao por chunk)\n", msec_chunks/1000, msec_chunks%1000);
-    printf("Tempo da busca com threads: %d seconds %d milliseconds (distribuicao esparsa\n", msec_esparsa/1000, msec_esparsa%1000);
+    printf("Tempo da busca com threads: %d seconds %d milliseconds (distribuicao esparsa)\n", msec_esparsa/1000, msec_esparsa%1000);
     printf("---------------------------------\n");
     escreve_arquivo(argv[1], argv[2], msec_sequencial, msec_chunks, msec_esparsa);
     pthread_exit(NULL);
