@@ -23,10 +23,6 @@ void client_called();
 void cliente_atendido();
 void giveup_call();
 
-typedef struct {
-    int id;
-} cliente;
-
 void* operator(void *arg)
 {
     int id_client = (intptr_t)arg;
@@ -62,19 +58,19 @@ void* client(void *arg)
 }
 
 void atende_cliente() {
-printf("Atendente esta falando com algum cliente! Ha %d chamadas em espera\n", queue);
-sleep(rand () % 3 + 1);
+    printf("Atendente esta falando com algum cliente! Ha %d chamadas em espera\n", queue);
+    sleep(rand () % 3 + 1);
 }
 
 void client_called(int id_client) {
-printf("Cliente %d está ligando! Havia %d chamadas em espera\n", id_client, queue);
+    printf("Cliente %d está ligando! Havia %d chamadas em espera\n", id_client, queue);
 }
 void cliente_atendido(int id_client) {
-printf("Cliente %d está sendo atendido!\n", id_client);
+    printf("Cliente %d está sendo atendido! Ha %d chamadas em espera\n", id_client, queue);
 }
 
 void giveup_call(int id_client) {
-printf("Cliente %d não consegue realizar a chamada. Todas as linhas ocupadas\n", id_client);
+    printf("Cliente %d não consegue realizar a chamada. Todas as linhas ocupadas\n", id_client);
 }
 
 void callcenter(int num_linhas)
