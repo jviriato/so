@@ -12,7 +12,6 @@
 
 int queue = 0;
 int queue_max;
-int id_client = 0;
 sem_t mutex;
 sem_t operators;
 sem_t clients;
@@ -24,35 +23,39 @@ void client_called();
 void cliente_atendido();
 void giveup_call();
 
+typedef struct {
+    int id;
+} cliente;
 
 void* operator(void *arg)
 {
+    int id_client = (int)arg;
     while(TRUE) {
         sem_wait(&clients);     /* vai tomar café se o número de clientes for 0 */
         sem_wait(&mutex);       /* obtém acesso a queue */
         queue = queue - 1;      /* descresce de um o contador de clientes à espera */
         sem_post(&operators);   /* um atendente está agora pronto para atender ligações */
         sem_post(&mutex);       /* libera queue */
-        atende_cliente();       /* atende cliente (fora da região crítica) */
+        atende_cliente(id_client);       /* atende cliente (fora da região crítica) */
     }
     pthread_exit(NULL);
 }
 
 void* client(void *arg)
 {
-
+    int id_client = (int)arg;
     sem_wait(&mutex);           /* entra na região crítica */
     if(queue < queue_max) {     /* se não houver linhas disponíveis, desligue */
-        client_called();
+        client_called(id_client);
         queue = queue + 1;      /* incrementa o contador de clientes à espera */
         sem_post(&clients);     /* acorda o operador se necessário */
         sem_post(&mutex);       /* libera o acesso a fila */
         sem_wait(&operators);   /* dorme se operadores livres for 0 */
-        cliente_atendido();     /* ligação realizada */
+        cliente_atendido(id_client);     /* ligação realizada */
     } 
     else {
         sem_post(&mutex);       /* fila cheia, desiste */
-        giveup_call();
+        giveup_call(id_client);
     }
     pthread_exit(NULL);
 
@@ -63,14 +66,14 @@ printf("Atendente esta falando com algum cliente! Ha %d chamadas em espera\n", q
 sleep(rand () % 3 + 1);
 }
 
-void client_called() {
+void client_called(int id_client) {
 printf("Cliente %d está ligando! Havia %d chamadas em espera\n", id_client, queue);
 }
-void cliente_atendido() {
+void cliente_atendido(int id_client) {
 printf("Cliente %d está sendo atendido!\n", id_client);
 }
 
-void giveup_call() {
+void giveup_call(int id_client) {
 printf("Cliente %d não consegue realizar a chamada. Todas as linhas ocupadas\n", id_client);
 }
 
@@ -87,9 +90,10 @@ void callcenter(int num_linhas)
     // cria operador de telemarketing
     pthread_create(&o, NULL, (void *) operator, NULL);
     // cria clientes
+    int id_client = 0;
     while(TRUE) {
-        id_client = id_client + 1;
-        pthread_create(&c, NULL, (void *) client, NULL);
+        id_client++;
+        pthread_create(&c, NULL, (void *) client, (void*)id_client);
         sleep(1);
     }
 
