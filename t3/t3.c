@@ -29,7 +29,7 @@ typedef struct {
 
 void* operator(void *arg)
 {
-    int id_client = (int)arg;
+    int id_client = (intptr_t)arg;
     while(TRUE) {
         sem_wait(&clients);     /* vai tomar café se o número de clientes for 0 */
         sem_wait(&mutex);       /* obtém acesso a queue */
@@ -43,7 +43,7 @@ void* operator(void *arg)
 
 void* client(void *arg)
 {
-    int id_client = (int)arg;
+    int id_client = (intptr_t)arg;
     sem_wait(&mutex);           /* entra na região crítica */
     if(queue < queue_max) {     /* se não houver linhas disponíveis, desligue */
         client_called(id_client);
@@ -93,7 +93,7 @@ void callcenter(int num_linhas)
     int id_client = 0;
     while(TRUE) {
         id_client++;
-        pthread_create(&c, NULL, (void *) client, (void*)id_client);
+        pthread_create(&c, NULL, (void *) client, (void*)(intptr_t)id_client);
         sleep(1);
     }
 
