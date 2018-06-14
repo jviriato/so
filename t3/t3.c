@@ -5,7 +5,6 @@
 #include <time.h>
 #include <semaphore.h>
 
-
 #define TRUE 1
 
 int queue = 0;
@@ -20,6 +19,7 @@ void atende_cliente();
 void client_called();
 void cliente_atendido();
 void giveup_call();
+void callcenter(int num_linhas);
 
 void* operator(void *arg)
 {
@@ -52,7 +52,6 @@ void* client(void *arg)
         giveup_call(id_client);
     }
     pthread_exit(NULL);
-
 }
 
 void atende_cliente()
@@ -87,7 +86,6 @@ void callcenter(int num_linhas)
     sem_init(&operators, TRUE, 0);
     sem_init(&mutex, TRUE, 1);
 
-
     // cria operador de telemarketing
     pthread_create(&o, NULL, (void *) operator, NULL);
     // cria clientes
@@ -97,7 +95,6 @@ void callcenter(int num_linhas)
         pthread_create(&c, NULL, (void *) client, (void*)(intptr_t)id_client);
         sleep(1);
     }
-
 }
 
 int main(int argc, char const *argv[])
