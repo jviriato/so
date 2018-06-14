@@ -55,19 +55,23 @@ void* client(void *arg)
 
 }
 
-void atende_cliente() {
+void atende_cliente()
+{
     printf("Atendente esta falando com algum cliente! Ha %d chamadas em espera\n", queue);
     sleep(rand () % 3 + 1);
 }
 
-void client_called(int id_client) {
+void client_called(int id_client)
+{
     printf("Cliente %d está ligando! Havia %d chamadas em espera\n", id_client, queue);
 }
-void cliente_atendido(int id_client) {
+void cliente_atendido(int id_client)
+{
     printf("Cliente %d está sendo atendido! Ha %d chamadas em espera\n", id_client, queue);
 }
 
-void giveup_call(int id_client) {
+void giveup_call(int id_client)
+{
     printf("Cliente %d não consegue realizar a chamada. Todas as linhas ocupadas\n", id_client);
 }
 
@@ -75,7 +79,9 @@ void callcenter(int num_linhas)
 {
     pthread_t o, c;
     queue_max = num_linhas;
-    printf("----------------------------------------------------------------------------------\nCall Center do José Victor (numero de linhas de espera: %d)\n----------------------------------------------------------------------------------\n", queue_max);
+    printf("----------------------------------------------------------------------------------\n"
+    "Call Center do José Victor (numero de linhas de espera: %d)\n"
+    "----------------------------------------------------------------------------------\n", queue_max);
 
     sem_init(&clients, TRUE, 0);
     sem_init(&operators, TRUE, 0);
