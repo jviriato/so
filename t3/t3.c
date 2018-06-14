@@ -16,9 +16,9 @@ sem_t clients;
 void* operator(void *arg);
 void* client(void *arg);
 void atende_cliente();
-void client_called();
-void cliente_atendido();
-void giveup_call();
+void client_called(int id_client);
+void cliente_atendido(int id_client);
+void giveup_call(int id_client);
 void callcenter(int num_linhas);
 
 void* operator(void *arg)
