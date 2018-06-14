@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <semaphore.h>
+#include <stdint.h>
 
 #define TRUE 1
 
