@@ -2,9 +2,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <string.h>
 #include <time.h>
-#include <math.h>
 #include <semaphore.h>
 
 
@@ -77,6 +75,7 @@ void callcenter(int num_linhas)
 {
     pthread_t o, c;
     queue_max = num_linhas;
+    printf("----------------------------------------------------------------------------------\nCall Center do José Victor (numero de linhas de espera: %d)\n----------------------------------------------------------------------------------\n", queue_max);
 
     sem_init(&clients, TRUE, 0);
     sem_init(&operators, TRUE, 0);
